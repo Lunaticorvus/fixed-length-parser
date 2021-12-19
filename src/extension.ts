@@ -16,8 +16,6 @@ export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand('fixed-length-parser.apply', () => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
-		const start_pos = new vscode.Position(0, 0);
-		const end_pos = new vscode.Position(0, 10);
 		
 		const text = vscode.window.activeTextEditor?.document.getText().toString();
 
