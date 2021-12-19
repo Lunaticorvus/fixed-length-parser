@@ -10,14 +10,14 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:fixed-length-parser.helloWorld"
+        "onCommand:fixed-length-parser.apply"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "fixed-length-parser.helloWorld",
-				"title": "Hello World"
+				"command": "fixed-length-parser.apply",
+				"title": "fixed-length-parser: apply color background text editor"
 			}
 		]
 	},

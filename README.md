@@ -37,7 +37,59 @@ Users appreciate release notes as you update your extension.
 
 ### 1.0.0
 
-Initial release of ...
+Initial release of fixed length parser
+it apply color with setting.json like below format
+
+```
+"fixed-length-parser": {
+        "header": {
+            "h_a": {
+                "size": 4,
+            },
+            "h_b": {
+                "size": 6,
+            },
+            "h_c": {
+                "size": 12,
+            }
+        },
+        "body": {
+            "b_a": {
+                "size": 2,
+            },
+            "b_b": {
+                "size": 4,
+            },
+            "b_c": {
+                "size": 8,
+            },
+            "b_d": {
+                "size": 10,
+            },
+            "b_e": {
+                "size": 2,
+            },
+        },
+        "tail": {
+            "t_a": {
+                "size": 6,
+            },
+            "t_b": {
+                "size": 6,
+            },
+            "t_c": {
+                "size": 6,
+            },
+            "t_d": {
+                "size": 6,
+            },
+        },
+    }
+```
+
+header is first line and tail is last line
+other line is applied color, line by line
+(size / 2) is length
 
 ### 1.0.1
 
