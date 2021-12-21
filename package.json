@@ -2,15 +2,16 @@
   "name": "fixed-length-parser",
 	"displayName": "fixed_length_parser",
 	"description": "parsing fiexed length date with json config file",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"engines": {
-		"vscode": "^1.50.0"
+		"vscode": "^1.63.0"
 	},
 	"categories": [
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:fixed-length-parser.apply"
+        "onCommand:fixed-length-parser.apply",
+		"onView:fiexed-length-parser-view"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
@@ -19,7 +20,15 @@
 				"command": "fixed-length-parser.apply",
 				"title": "fixed-length-parser: apply color background text editor"
 			}
-		]
+		],
+		"views": {
+			"explorer": [
+				{
+					"id": "fiexed-length-parser-view",
+					"name": "Data Tree"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run package",
@@ -33,7 +42,7 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.50.0",
+		"@types/vscode": "^1.63.0",
 		"@types/glob": "^7.1.4",
 		"@types/mocha": "^9.0.0",
 		"@types/node": "14.x",

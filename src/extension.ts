@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { ParsedDataProvider } from './parsedDataProvider';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -93,8 +94,9 @@ export function activate(context: vscode.ExtensionContext) {
 				});
 			offsetAt += (curConfig["size"] / 2);
 		};
-		
+			
 		// attatch color
+		// header
 		for (let deco of headerDeco) {
 			const curDecoType = vscode.window.createTextEditorDecorationType({
 				backgroundColor: deco.backgroundColor,
@@ -105,7 +107,7 @@ export function activate(context: vscode.ExtensionContext) {
 			};
 			vscode.window.activeTextEditor?.setDecorations(curDecoType, [curRangeOption]);
 		}
-
+		// body
 		for (let deco of bodyDeco) {
 			const curDecoType = vscode.window.createTextEditorDecorationType({
 				backgroundColor: deco.backgroundColor,
@@ -116,7 +118,7 @@ export function activate(context: vscode.ExtensionContext) {
 			};
 			vscode.window.activeTextEditor?.setDecorations(curDecoType, [curRangeOption]);
 		}
-
+		// tail
 		for (let deco of tailDeco) {
 			const curDecoType = vscode.window.createTextEditorDecorationType({
 				backgroundColor: deco.backgroundColor,
@@ -128,55 +130,17 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.window.activeTextEditor?.setDecorations(curDecoType, [curRangeOption]);
 		}
 
-		// for (let i = 0; i < lastLineNum!; i++) {
-		// 	// header
-		// 	if (i === 0) {
-		// 		for (let j = 0; j < headerDeco.length; j++) {
-		// 			const curDecoType = vscode.window.createTextEditorDecorationType({
-		// 				backgroundColor: headerDeco[j].backgroundColor,
-		// 			});
-		// 			const curRangeOption = {
-		// 				range: headerDeco[j].range,
-		// 				hoverMessage: headerDeco[j].hoverMessage,
-		// 			};
-		// 			vscode.window.activeTextEditor?.setDecorations(curDecoType, [curRangeOption]);
-		// 		}
-		// 	}
-		// 	else if (i > 0 && (i < lastLineNum! - 1)) {
-		// 		// body
-		// 		for (let j = 0; j < bodyDeco.length; j++) {
-		// 			const curDecoType = vscode.window.createTextEditorDecorationType({
-		// 				backgroundColor: bodyDeco[j].backgroundColor,
-		// 			});
-		// 			const curRangeOption = {
-		// 				range: bodyDeco[j].range,
-		// 				hoverMessage: bodyDeco[j].hoverMessage,
-		// 			};
-		// 			vscode.window.activeTextEditor?.setDecorations(curDecoType, [curRangeOption]);
-		// 		}
-		// 	}
-		// 	else if (i === lastLineNum! - 1) {
-		// 		//tail
-		// 		for (let j = 0; j < tailDeco.length; j++) {
-		// 			const curDecoType = vscode.window.createTextEditorDecorationType({
-		// 				backgroundColor: tailDeco[j].backgroundColor,
-		// 			});
-		// 			const curRangeOption = {
-		// 				range: tailDeco[j].range,
-		// 				hoverMessage: tailDeco[j].hoverMessage,
-		// 			};
-		// 			vscode.window.activeTextEditor?.setDecorations(curDecoType, [curRangeOption]);
-		// 		}
-		// 	}
-		// }
-		//vscode.window.activeTextEditor?.setDecorations(deco_type, [range_deco]);
-
 		if (text){
 			vscode.window.showInformationMessage("attach complete!");
 		}
 
-		console.log("config: ", config);
-		
+		console.log("config: ", config);		
+
+		// make tree view
+		//vscode.window.registerTreeDataProvider("fiexed-length-parser-view", new ParsedDataProvider(headerDeco, bodyDeco, tailDeco));
+		vscode.window.createTreeView("fiexed-length-parser-view", {
+			treeDataProvider: new ParsedDataProvider(headerDeco, bodyDeco, tailDeco)
+		});
 	});
 
 	context.subscriptions.push(disposable);
