@@ -32,7 +32,7 @@ export class ParsedDataProvider implements vscode.TreeDataProvider<Object> {
                 for (let i = 0; i < this.bodyData.length; i++) {
                     const curRange = this.bodyData[i].range as vscode.Range;
                     if (curRange.start.line === curLineIdx) {
-                        tmpData.push(new ParesdData(this.bodyData[i].hoverMessage as string, vscode.window.activeTextEditor!.document.getText(this.bodyData[i].range as vscode.Range), vscode.TreeItemCollapsibleState.None))
+                        tmpData.push(new ParesdData(this.bodyData[i].hoverMessage as string, vscode.window.activeTextEditor!.document.getText(this.bodyData[i].range as vscode.Range), vscode.TreeItemCollapsibleState.None));
                     }
                 }
                 return Promise.resolve(tmpData);

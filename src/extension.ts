@@ -6,43 +6,57 @@ import { ParsedDataProvider } from './parsedDataProvider';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+	// color info
+	const colorOffset = ["rgba(255, 100, 100, 0.4)", "rgba(100, 255, 100, 0.4)", "rgba(100, 100, 255, 0.4)"];
+
+	// get config and data info
+	let config = vscode.workspace.getConfiguration('fixed-length-parser');
+	let headerConfig = config.get("header") as any;
+	let headerKeys = Object.keys(config.get("header") as Object);
+	let bodyConfig = config.get("body") as any;
+	let bodyKeys = Object.keys(config.get("body") as Object);
+	let tailConfig = config.get("tail") as any;
+	let tailKeys = Object.keys(config.get("tail") as Object);
+
+	let commandYN:boolean = false;
 	
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
+		// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "fixed-length-parser" is now active!');
+	const headerDeco: any[] = [];
+	const bodyDeco: any[] = [];
+	const tailDeco: any[] = [];
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('fixed-length-parser.apply', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		
-		const text = vscode.window.activeTextEditor?.document.getText().toString();
+	const headerDecoType: {type:vscode.TextEditorDecorationType, range:{range:vscode.Range, hoverMessage: string}}[] = [];
+	const bodyDecoType: {type:vscode.TextEditorDecorationType, range:{range:vscode.Range, hoverMessage: string}}[] = [];
+	const tailDecoType: {type:vscode.TextEditorDecorationType, range:{range:vscode.Range, hoverMessage: string}}[] = [];
 
+
+	let handleChange = function() {
 		// last line;
 		const lastLineNum = vscode.window.activeTextEditor?.document.lineCount;
 
-		// get config and data info
-		const config = vscode.workspace.getConfiguration('fixed-length-parser');
-		const headerConfig = config.get("header") as any;
-		const headerKeys = Object.keys(config.get("header") as Object);
-		const bodyConfig = config.get("body") as any;
-		const bodyKeys = Object.keys(config.get("body") as Object);
-		const tailConfig = config.get("tail") as any;
-		const tailKeys = Object.keys(config.get("tail") as Object);
-
-		console.log("config", config);
-
-		// color info
-		const colorOffset = ["rgba(255,0,0, 0.5)", "rgba(0, 255, 0, 0.5)", "rgba(0, 0, 255, 0.5)"];
-
-		const headerDeco = [];
-		const bodyDeco = [];
-		const tailDeco = [];
-
 		let offsetLine = 0;
 		let offsetAt = 0;
+
+		for (let decoType of headerDecoType) {
+			decoType.type.dispose();
+		}
+
+		for (let decoType of bodyDecoType) {
+			decoType.type.dispose();
+		}
+
+		for (let decoType of tailDecoType) {
+			decoType.type.dispose();
+		}
+
+		headerDeco.splice(0, headerDeco.length);
+		bodyDeco.splice(0, bodyDeco.length);
+		tailDeco.splice(0, tailDeco.length);
+		headerDecoType.splice(0, headerDecoType.length);
+		bodyDecoType.splice(0, bodyDecoType.length);
+		tailDecoType.splice(0, tailDecoType.length);
 
 		// header
 		for (let i = 0; i < headerKeys.length; i++){
@@ -105,7 +119,7 @@ export function activate(context: vscode.ExtensionContext) {
 				range: deco.range,
 				hoverMessage: deco.hoverMessage,
 			};
-			vscode.window.activeTextEditor?.setDecorations(curDecoType, [curRangeOption]);
+			headerDecoType.push({type:curDecoType, range:curRangeOption});
 		}
 		// body
 		for (let deco of bodyDeco) {
@@ -116,7 +130,7 @@ export function activate(context: vscode.ExtensionContext) {
 				range: deco.range,
 				hoverMessage: deco.hoverMessage,
 			};
-			vscode.window.activeTextEditor?.setDecorations(curDecoType, [curRangeOption]);
+			bodyDecoType.push({type:curDecoType, range:curRangeOption});
 		}
 		// tail
 		for (let deco of tailDeco) {
@@ -127,20 +141,57 @@ export function activate(context: vscode.ExtensionContext) {
 				range: deco.range,
 				hoverMessage: deco.hoverMessage,
 			};
-			vscode.window.activeTextEditor?.setDecorations(curDecoType, [curRangeOption]);
+			tailDecoType.push({type:curDecoType, range:curRangeOption});
 		}
 
-		if (text){
-			vscode.window.showInformationMessage("attach complete!");
+		console.log("handleChange");
+		for (let decoType of headerDecoType) {
+			vscode.window.activeTextEditor?.setDecorations(decoType.type, [decoType.range]);
 		}
 
-		console.log("config: ", config);		
+		for (let decoType of bodyDecoType) {
+			vscode.window.activeTextEditor?.setDecorations(decoType.type, [decoType.range]);
+		}
+
+		for (let decoType of tailDecoType) {
+			vscode.window.activeTextEditor?.setDecorations(decoType.type, [decoType.range]);
+		}
 
 		// make tree view
 		//vscode.window.registerTreeDataProvider("fiexed-length-parser-view", new ParsedDataProvider(headerDeco, bodyDeco, tailDeco));
 		vscode.window.createTreeView("fiexed-length-parser-view", {
 			treeDataProvider: new ParsedDataProvider(headerDeco, bodyDeco, tailDeco)
 		});
+	};
+	// The command has been defined in the package.json file
+	// Now provide the implementation of the command with registerCommand
+	// The commandId parameter must match the command field in package.json
+	let disposable = vscode.commands.registerCommand('fixed-length-parser.apply', () => {
+		// The code you place here will be executed every time your command is executed
+		// Display a message box to the user
+		const text = vscode.window.activeTextEditor?.document.getText().toString();
+		
+		config = vscode.workspace.getConfiguration('fixed-length-parser');
+		headerConfig = config.get("header") as any;
+		headerKeys = Object.keys(config.get("header") as Object);
+		bodyConfig = config.get("body") as any;
+		bodyKeys = Object.keys(config.get("body") as Object);
+		tailConfig = config.get("tail") as any;
+		tailKeys = Object.keys(config.get("tail") as Object);
+
+		console.log("config", config);
+
+		if (text){
+			vscode.window.showInformationMessage("attach complete!");
+		}
+
+		handleChange();
+		
+		if(!commandYN) {
+			vscode.workspace.onDidChangeTextDocument(handleChange);
+		}
+		commandYN = true;
+		console.log("config: ", config);		
 	});
 
 	context.subscriptions.push(disposable);
